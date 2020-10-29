@@ -9,14 +9,14 @@
 Pod::Spec.new do |s|
   s.name             = 'EosioSwiftVault'
   s.version          = '0.2.1'
-  s.summary          = 'Keychain and Secure Enclave functions for EOSIO.'
-  s.homepage         = 'https://github.com/EOSIO/eosio-swift-vault'
+  s.summary          = 'Keychain and Secure Enclave functions for ARISEN.'
+  s.homepage         = 'https://github.com/ARISEN/arisen-swift-vault'
   s.license          = { :type => 'MIT', :text => <<-LICENSE
                            Copyright (c) 2017-2019 block.one and its contributors.  All rights reserved.
                          LICENSE
                        }
   s.author           = { 'Todd Bowden' => 'todd.bowden@block.one' }
-  s.source           = { :git => 'https://github.com/EOSIO/eosio-swift-vault.git', :tag => "v" + s.version.to_s }
+  s.source           = { :git => 'https://github.com/ARISEN/arisen-swift-vault.git', :tag => "v" + s.version.to_s }
 
   s.swift_version         = '5.0'
   s.ios.deployment_target = '11.3'

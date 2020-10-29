@@ -133,10 +133,10 @@ public final class EosioVault {
         return vaultKey
     }
 
-    /// Import an external EOSIO private key into the Keychain. Returns a VaultKey or throws an error.
+    /// Import an external ARISEN private key into the Keychain. Returns a VaultKey or throws an error.
     ///
     /// - Parameters:
-    ///   - eosioPrivateKey: An EOSIO private key.
+    ///   - eosioPrivateKey: An ARISEN private key.
     ///   - protection: Accessibility defaults to .whenUnlockedThisDeviceOnly.
     ///   - bioFactor: The `BioFactor` for this key.
     ///   - metadata: Any metadata to associate with this key.
@@ -180,7 +180,7 @@ public final class EosioVault {
 
     /// Delete a key given the public key. USE WITH CARE!
     ///
-    /// - Parameter eosioPublicKey: The public key for the EOSIO key to delete.
+    /// - Parameter eosioPublicKey: The public key for the ARISEN key to delete.
     /// - Throws: If there is an error deleting the key.
     public func deleteKey(eosioPublicKey: String) throws {
         let pubKeyData = try Data(eosioPublicKey: eosioPublicKey)
@@ -192,7 +192,7 @@ public final class EosioVault {
     ///
     /// - Parameters:
     ///   - label: The new value for the label.
-    ///   - publicKey: The public EOSIO key.
+    ///   - publicKey: The public ARISEN key.
     /// - Throws: If the label cannot be updated.
     public func update(label: String, publicKey: String) throws {
         let pubKeyData = try Data(eosioPublicKey: publicKey)
@@ -237,7 +237,7 @@ public final class EosioVault {
 
     /// Get the vault key for the eosioPublicKey.
     ///
-    /// - Parameter eosioPublicKey: An EOSIO public key.
+    /// - Parameter eosioPublicKey: An ARISEN public key.
     /// - Returns: A VaultKey.
     /// - Throws: If the key cannot be found.
     public func getVaultKey(eosioPublicKey: String) throws -> EosioVault.VaultKey {
@@ -256,9 +256,9 @@ public final class EosioVault {
     ///
     /// - Parameters:
     ///   - message: The message to sign.
-    ///   - eosioPublicKey: The EOSIO public key corresponding to the key to use for signing.
+    ///   - eosioPublicKey: The ARISEN public key corresponding to the key to use for signing.
     ///   - requireBio: Require biometric identification even if the key does not require it.
-    ///   - completion: Closure returning an EOSIO signature or an error.
+    ///   - completion: Closure returning an ARISEN signature or an error.
     public func sign(message: Data, eosioPublicKey: String, requireBio: Bool, completion: @escaping (String?, EosioError?) -> Void) {
         do {
             let vaultKey = try getVaultKey(eosioPublicKey: eosioPublicKey)
@@ -359,7 +359,7 @@ public final class EosioVault {
     /// Save metadata for the eosioPublicKey.
     ///
     /// - Parameters:
-    ///   - eosioPublicKey: The EOSIO public key.
+    ///   - eosioPublicKey: The ARISEN public key.
     ///   - dictionary: A metadata dictionary to save.
     /// - Returns: True if the metadata was saved, otherwise false.
     /// - Important: Metadata must follow the rules for JSONSerialization.
@@ -397,7 +397,7 @@ public final class EosioVault {
 
     /// Get metadata for the eosioPublicKey.
     ///
-    /// - Parameter eosioPublicKey: An EOSIO public key.
+    /// - Parameter eosioPublicKey: An ARISEN public key.
     /// - Returns: The metadata dictionary for the key, if existing.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization

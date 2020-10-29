@@ -11,11 +11,11 @@ import EosioSwiftEcc
 
 public extension EosioVault {
 
-    /// VaultKey collects properties into a single object for an EOSIO elliptic curve key.
+    /// VaultKey collects properties into a single object for an ARISEN elliptic curve key.
     struct VaultKey {
-        /// The EOSIO public key.
+        /// The ARISEN public key.
         private (set) public var eosioPublicKey: String
-        /// The EOSIO private key. (nil for Secure Enclave keys).
+        /// The ARISEN private key. (nil for Secure Enclave keys).
         public var eosioPrivateKey: String? {
             guard let privateKey = privateKey else { return nil }
             guard privateKey.count >= 32 else { return nil }
@@ -59,7 +59,7 @@ public extension EosioVault {
         /// Init a VaultKey.
         ///
         /// - Parameters:
-        ///   - eosioPublicKey: An EOSIO public key.
+        ///   - eosioPublicKey: An ARISEN public key.
         ///   - ecKey: An ECKey.
         ///   - metadata: Metadata dictionary.
         /// - Important: Metadata must follow the rules for JSONSerialization.

@@ -10,8 +10,8 @@ if using_local_pods
   target 'EosioSwiftVault' do
     use_frameworks!
 
-    pod 'EosioSwift', :path => '../eosio-swift'
-    pod 'EosioSwiftEcc', :path => '../eosio-swift-ecc'
+    pod 'EosioSwift', :path => '../arisen-swift'
+    pod 'EosioSwiftEcc', :path => '../arisen-swift-ecc'
     pod 'SwiftLint'
 
     target 'EosioSwiftVaultTests' do

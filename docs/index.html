@@ -32,7 +32,7 @@
       </p>
     
         <p class="header-col header-col--secondary">
-          <a class="header-link" href="https://github.com/EOSIO/eosio-swift-vault">
+          <a class="header-link" href="https://github.com/ARISEN/arisen-swift-vault">
             <img class="header-icon" src="img/gh.png"/>
             View on GitHub
           </a>
@@ -90,16 +90,16 @@
         <section class="section">
           <div class="section-content">
             
-            <p><img src="https://github.com/EOSIO/eosio-swift-vault/raw/master/img/swift-logo.png" alt="Swift Logo"></p>
-<h1 id='eosio-sdk-for-swift-vault-img-src-https-img-shields-io-badge-eosio-alpha-blue-svg-alt-eosio-alpha' class='heading'>EOSIO SDK for Swift: Vault <img src="https://img.shields.io/badge/EOSIO-Alpha-blue.svg" alt="EOSIO Alpha"></h1>
+            <p><img src="https://github.com/ARISEN/arisen-swift-vault/raw/master/img/swift-logo.png" alt="Swift Logo"></p>
+<h1 id='arisen-sdk-for-swift-vault-img-src-https-img-shields-io-badge-arisen-alpha-blue-svg-alt-arisen-alpha' class='heading'>ARISEN SDK for Swift: Vault <img src="https://img.shields.io/badge/ARISEN-Alpha-blue.svg" alt="ARISEN Alpha"></h1>
 
-<p><a href="https://github.com/EOSIO/eosio-swift/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="Software License"></a>
+<p><a href="https://github.com/ARISEN/arisen-swift/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-lightgrey.svg" alt="Software License"></a>
 <a href="https://swift.org"><img src="https://img.shields.io/badge/Language-Swift_5.0-orange.svg" alt="Swift 5.0"></a>
 <img src="https://img.shields.io/badge/Deployment%20Target-iOS%2011.3-blue.svg" alt=""></p>
 
-<p>EOSIO SDK for Swift: Vault is a utility library for working with public/private keys and signing with Apple&rsquo;s Keychain and Secure Enclave.</p>
+<p>ARISEN SDK for Swift: Vault is a utility library for working with public/private keys and signing with Apple&rsquo;s Keychain and Secure Enclave.</p>
 
-<p>The Vault library is a required dependency of the <a href="https://github.com/EOSIO/eosio-swift-vault-signature-provider">EOSIO SDK for Swift: Vault Signature Provider</a>. It additionally provides key generation, management and signing functions that can be called directly.
+<p>The Vault library is a required dependency of the <a href="https://github.com/ARISEN/arisen-swift-vault-signature-provider">ARISEN SDK for Swift: Vault Signature Provider</a>. It additionally provides key generation, management and signing functions that can be called directly.
 <em>All product and company names are trademarks™ or registered® trademarks of their respective holders. Use of them does not imply any affiliation with or endorsement by them.</em></p>
 <h2 id='contents' class='heading'>Contents</h2>
 
@@ -123,7 +123,7 @@
 </ul>
 <h2 id='installation' class='heading'>Installation</h2>
 
-<p>If you are using Vault as part of the <a href="https://github.com/EOSIO/eosio-swift-vault-signature-provider">EOSIO SDK for Swift: Vault Signature Provider</a> pod, Vault will be installed automatically as a dependency.</p>
+<p>If you are using Vault as part of the <a href="https://github.com/ARISEN/arisen-swift-vault-signature-provider">ARISEN SDK for Swift: Vault Signature Provider</a> pod, Vault will be installed automatically as a dependency.</p>
 
 <p>If you wish to use Vault directly, add the following pods to your <a href="https://guides.cocoapods.org/syntax/podfile.html">Podfile</a>:</p>
 <pre class="highlight ruby"><code><span class="n">use_frameworks!</span>
@@ -136,7 +136,7 @@
 <p>Then run <code>pod install</code>.</p>
 <h2 id='eosiovault' class='heading'>EosioVault</h2>
 
-<p>The primary class for interacting with the EOSIO SDK for Swift: Vault is <code><a href="Classes/EosioVault.html">EosioVault</a></code>. A instance of <code><a href="Classes/EosioVault.html">EosioVault</a></code> is instantiated with an <code>accessGroup</code> as follows:</p>
+<p>The primary class for interacting with the ARISEN SDK for Swift: Vault is <code><a href="Classes/EosioVault.html">EosioVault</a></code>. A instance of <code><a href="Classes/EosioVault.html">EosioVault</a></code> is instantiated with an <code>accessGroup</code> as follows:</p>
 <pre class="highlight swift"><code><span class="kd">import</span> <span class="kt">EosioSwiftVault</span>
 
 <span class="k">let</span> <span class="nv">vault</span> <span class="o">=</span> <span class="kt">EosioVault</span><span class="p">(</span><span class="nv">accessGroup</span><span class="p">:</span> <span class="n">accessGroup</span><span class="p">)</span>
@@ -145,7 +145,7 @@
 <p>The <code>accessGroup</code> is a <a href="https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups">App Group Identifier</a> or a <a href="https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups">Keychain Access Group Identifier</a> that allows the keys to be shared between different apps and app extensions in the same developer account.</p>
 <h2 id='key-generation' class='heading'>Key Generation</h2>
 
-<p>The Vault library exposes functions to generate new EOSIO keys. New keys can either be generated and stored in the device&rsquo;s <a href="https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/storing_keys_in_the_secure_enclave">Secure Enclave</a> or the Keychain. <strong>Note:</strong> If the key is stored in Secure Enclave, it is not possible to directly access or export the private key.</p>
+<p>The Vault library exposes functions to generate new ARISEN keys. New keys can either be generated and stored in the device&rsquo;s <a href="https://developer.apple.com/documentation/security/certificate_key_and_trust_services/keys/storing_keys_in_the_secure_enclave">Secure Enclave</a> or the Keychain. <strong>Note:</strong> If the key is stored in Secure Enclave, it is not possible to directly access or export the private key.</p>
 
 <p><strong>Important:</strong> Currently key metadata must conform to the rules for conversion by <a href="https://developer.apple.com/documentation/foundation/jsonserialization">JSONSerialization</a>.  Failure to do so will result in application errors. </p>
 
@@ -165,7 +165,7 @@
 
 <p><code>protection</code> is the accessibility to use the for key.</p>
 
-<p>Each of the above functions will return an <code><a href="Classes/EosioVault/VaultKey.html">EosioVault.VaultKey</a></code>. To access the EOSIO public and private keys:</p>
+<p>Each of the above functions will return an <code><a href="Classes/EosioVault/VaultKey.html">EosioVault.VaultKey</a></code>. To access the ARISEN public and private keys:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">publicKey</span> <span class="o">=</span> <span class="n">newKey</span><span class="o">.</span><span class="n">eosioPublicKey</span>
 <span class="k">let</span> <span class="nv">privateKey</span> <span class="o">=</span> <span class="n">newKey</span><span class="o">.</span><span class="n">eosioPrivateKey</span>
 </code></pre>
@@ -173,7 +173,7 @@
 <p>For Secure Enclave keys the <code>eosioPrivateKey</code> is <code>nil</code> as it cannot be accessed.</p>
 <h2 id='signing' class='heading'>Signing</h2>
 
-<p>In most cases, signing is handled via the <a href="https://github.com/EOSIO/eosio-swift-vault-signature-provider">EOSIO SDK for Swift: Vault Signature Provider</a>. However, a message can also be signed directly with an instance of <code><a href="Classes/EosioVault.html">EosioVault</a></code>:</p>
+<p>In most cases, signing is handled via the <a href="https://github.com/ARISEN/arisen-swift-vault-signature-provider">ARISEN SDK for Swift: Vault Signature Provider</a>. However, a message can also be signed directly with an instance of <code><a href="Classes/EosioVault.html">EosioVault</a></code>:</p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">signature</span> <span class="o">=</span> <span class="n">vault</span><span class="o">.</span><span class="nf">sign</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span> <span class="nv">eosioPublicKey</span><span class="p">:</span> <span class="n">publicKey</span><span class="p">,</span> <span class="nv">requireBio</span><span class="p">:</span> <span class="kc">true</span><span class="p">)</span> <span class="p">{</span> <span class="p">(</span><span class="n">signature</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span> <span class="k">in</span>
     <span class="c1">// handle signature or error</span>
 <span class="p">}</span>
@@ -184,7 +184,7 @@
 
 <p>The Vault library exposes functions to get existing keys, add external keys, delete keys and modify metadata for existing keys. </p>
 
-<p>To get a single VaultKey for an EOSIO public key: </p>
+<p>To get a single VaultKey for an ARISEN public key: </p>
 <pre class="highlight swift"><code><span class="k">let</span> <span class="nv">key</span> <span class="o">=</span> <span class="k">try</span> <span class="nf">getVaultKey</span><span class="p">(</span><span class="nv">eosioPublicKey</span><span class="p">:</span> <span class="n">publicKey</span><span class="p">)</span>
 </code></pre>
 
@@ -205,16 +205,16 @@
 </code></pre>
 <h2 id='documentation' class='heading'>Documentation</h2>
 
-<p>Please refer to the generated code documentation at <a href="https://eosio.github.io/eosio-swift-vault">https://eosio.github.io/eosio-swift-vault</a> or by cloning this repo and opening the <code>docs/index.html</code> file in your browser.</p>
+<p>Please refer to the generated code documentation at <a href="https://arisen.github.io/arisen-swift-vault">https://arisen.github.io/arisen-swift-vault</a> or by cloning this repo and opening the <code>docs/index.html</code> file in your browser.</p>
 <h2 id='want-to-help' class='heading'>Want to help?</h2>
 
-<p>Interested in contributing? That&rsquo;s awesome! Here are some <a href="https://github.com/EOSIO/eosio-swift-vault/blob/master/CONTRIBUTING.md">Contribution Guidelines</a> and the <a href="https://github.com/EOSIO/eosio-swift-vault/blob/master/CONTRIBUTING.md#conduct">Code of Conduct</a>.</p>
+<p>Interested in contributing? That&rsquo;s awesome! Here are some <a href="https://github.com/ARISEN/arisen-swift-vault/blob/master/CONTRIBUTING.md">Contribution Guidelines</a> and the <a href="https://github.com/ARISEN/arisen-swift-vault/blob/master/CONTRIBUTING.md#conduct">Code of Conduct</a>.</p>
 <h2 id='license' class='heading'>License</h2>
 
-<p><a href="https://github.com/EOSIO/eosio-swift-vault/blob/master/LICENSE">MIT</a></p>
+<p><a href="https://github.com/ARISEN/arisen-swift-vault/blob/master/LICENSE">MIT</a></p>
 <h2 id='important' class='heading'>Important</h2>
 
-<p>See LICENSE for copyright and license terms.  Block.one makes its contribution on a voluntary basis as a member of the EOSIO community and is not responsible for ensuring the overall performance of the software or any related applications.  We make no representation, warranty, guarantee or undertaking in respect of the software or any related documentation, whether expressed or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall we be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or documentation or the use or other dealings in the software or documentation. Any test results or performance figures are indicative and will not reflect performance under all conditions.  Any reference to any third party or third-party product, service or other resource is not an endorsement or recommendation by Block.one.  We are not responsible, and disclaim any and all responsibility and liability, for your use of or reliance on any of these resources. Third-party resources may be updated, changed or terminated at any time, so the information here may be out of date or inaccurate.  Any person using or offering this software in connection with providing software, goods or services to third parties shall advise such third parties of these license terms, disclaimers and exclusions of liability.  Block.one, EOSIO, EOSIO Labs, EOS, the heptahedron and associated logos are trademarks of Block.one.</p>
+<p>See LICENSE for copyright and license terms.  Block.one makes its contribution on a voluntary basis as a member of the ARISEN community and is not responsible for ensuring the overall performance of the software or any related applications.  We make no representation, warranty, guarantee or undertaking in respect of the software or any related documentation, whether expressed or implied, including but not limited to the warranties of merchantability, fitness for a particular purpose and noninfringement. In no event shall we be liable for any claim, damages or other liability, whether in an action of contract, tort or otherwise, arising from, out of or in connection with the software or documentation or the use or other dealings in the software or documentation. Any test results or performance figures are indicative and will not reflect performance under all conditions.  Any reference to any third party or third-party product, service or other resource is not an endorsement or recommendation by Block.one.  We are not responsible, and disclaim any and all responsibility and liability, for your use of or reliance on any of these resources. Third-party resources may be updated, changed or terminated at any time, so the information here may be out of date or inaccurate.  Any person using or offering this software in connection with providing software, goods or services to third parties shall advise such third parties of these license terms, disclaimers and exclusions of liability.  Block.one, ARISEN, ARISEN Labs, RSN, the heptahedron and associated logos are trademarks of Block.one.</p>
 
 <p>Wallets and related components are complex software that require the highest levels of security.  If incorrectly built or used, they may compromise users’ private keys and digital assets. Wallet applications and related components should undergo thorough security evaluations before being used.  Only experienced developers should work with this software.</p>
 
