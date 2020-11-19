@@ -14,7 +14,7 @@ The Vault library is a required dependency of the [ARISEN SDK for Swift: Vault S
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
-- [EosioVault](#eosiovault)
+- [ArisenVault](#Arisenvault)
 - [Key Generation](#key-generation)
 - [Signing](#signing)
 - [Key Management](#key-management)
@@ -38,20 +38,20 @@ If you wish to use Vault directly, add the following pods to your [Podfile](http
 use_frameworks!
 
 target "Your Target" do
-  pod "EosioSwiftVault", "~> 0.2.1"
+  pod "ArisenSwiftVault", "~> 0.2.1"
 end
 ```
 
 Then run `pod install`.
 
-## EosioVault
+## ArisenVault
 
-The primary class for interacting with the ARISEN SDK for Swift: Vault is `EosioVault`. A instance of `EosioVault` is instantiated with an `accessGroup` as follows:
+The primary class for interacting with the ARISEN SDK for Swift: Vault is `ArisenVault`. A instance of `ArisenVault` is instantiated with an `accessGroup` as follows:
 
 ```swift
-import EosioSwiftVault
+import ArisenSwiftVault
 
-let vault = EosioVault(accessGroup: accessGroup)
+let vault = ArisenVault(accessGroup: accessGroup)
 ```
 The `accessGroup` is a [App Group Identifier](https://developer.apple.com/documentation/bundleresources/entitlements/com_apple_security_application-groups) or a [Keychain Access Group Identifier](https://developer.apple.com/documentation/bundleresources/entitlements/keychain-access-groups) that allows the keys to be shared between different apps and app extensions in the same developer account.
 
@@ -82,21 +82,21 @@ The `bioFactor` is the type of biometric security that will be required by the k
 
 `protection` is the accessibility to use the for key.
 
-Each of the above functions will return an `EosioVault.VaultKey`. To access the ARISEN public and private keys:
+Each of the above functions will return an `ArisenVault.VaultKey`. To access the ARISEN public and private keys:
 
 ```swift
-let publicKey = newKey.eosioPublicKey
-let privateKey = newKey.eosioPrivateKey
+let publicKey = newKey.arisenPublicKey
+let privateKey = newKey.arisenPrivateKey
 ```
-For Secure Enclave keys the `eosioPrivateKey` is `nil` as it cannot be accessed.
+For Secure Enclave keys the `arisenPrivateKey` is `nil` as it cannot be accessed.
 
 
 ## Signing
 
-In most cases, signing is handled via the [ARISEN SDK for Swift: Vault Signature Provider](https://github.com/ARISEN/arisen-swift-vault-signature-provider). However, a message can also be signed directly with an instance of `EosioVault`:
+In most cases, signing is handled via the [ARISEN SDK for Swift: Vault Signature Provider](https://github.com/ARISEN/arisen-swift-vault-signature-provider). However, a message can also be signed directly with an instance of `ArisenVault`:
 
 ```swift
-let signature = vault.sign(message: message, eosioPublicKey: publicKey, requireBio: true) { (signature, error) in
+let signature = vault.sign(message: message, arisenPublicKey: publicKey, requireBio: true) { (signature, error) in
 	// handle signature or error
 }
 ```
@@ -110,7 +110,7 @@ The Vault library exposes functions to get existing keys, add external keys, del
 To get a single VaultKey for an ARISEN public key: 
 
 ```swift
-let key = try getVaultKey(eosioPublicKey: publicKey)
+let key = try getVaultKey(arisenPublicKey: publicKey)
 ```
 
 To get an array of all keys:
@@ -122,12 +122,12 @@ let keys = try getAllVaultKeys()
 To add an external key to the Keychain with the private key:
 
 ```swift
-try vault.addExternal(eosioPrivateKey: privateKey, metadata: [String: Any]) 
+try vault.addExternal(arisenPrivateKey: privateKey, metadata: [String: Any]) 
 ```
 To delete a key:
 
 ```swift
-try deleteKey(eosioPublicKey: publicKey)
+try deleteKey(arisenPublicKey: publicKey)
 ```
 To update an existing key, update the metadata property and then:
 

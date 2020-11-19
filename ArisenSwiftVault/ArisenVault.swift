@@ -1,6 +1,6 @@
 //
-//  EosioVault.swift
-//  EosioVault
+//  ArisenVault.swift
+//  ArisenVault
 //
 //  Created by Todd Bowden on 6/4/18.
 //  Copyright (c) 2017-2019 block.one and its contributors. All rights reserved.
@@ -8,18 +8,18 @@
 
 import Foundation
 import LocalAuthentication
-import EosioSwift
-import EosioSwiftEcc
+import ArisenSwift
+import ArisenSwiftEcc
 
 /// Utility library for managing keys and signing with Apple's Keychain and Secure Enclave.
-public final class EosioVault {
+public final class ArisenVault {
 
     /// Notification you can subscribe to notifying of Keychain updates.
-    public static let updateNotification = Notification.Name("EosioVaultUpdateNotification")
+    public static let updateNotification = Notification.Name("ArisenVaultUpdateNotification")
 
     private let keychain: Keychain
     private let vaultTag = "__VAULT__"
-    private let eosioKeyMetadataService = "EosioKeyMetadataService"
+    private let ArisenKeyMetadataService = "ArisenKeyMetadataService"
 
     /// The accessGroup allows multiple apps (including extensions) in the same team to share the same Keychain.
     public let accessGroup = ""
@@ -43,8 +43,8 @@ public final class EosioVault {
         keychain = Keychain(accessGroup: accessGroup)
     }
 
-    private func postUpdateNotification(eosioPublicKey: String, action: String) {
-        NotificationCenter.default.post(name: EosioVault.updateNotification, object: nil, userInfo: ["eosioPublicKey": eosioPublicKey, "action": action])
+    private func postUpdateNotification(arisenPublicKey: String, action: String) {
+        NotificationCenter.default.post(name: ArisenVault.updateNotification, object: nil, userInfo: ["arisenPublicKey": arisenPublicKey, "action": action])
     }
 
     /// Get the vaultIdentifierKey (a special Secure Enclave key with tag "__VAULT__".) Create if not present.
@@ -59,7 +59,7 @@ public final class EosioVault {
             vaultKeyArray = try keychain.getAllEllipticCurveKeys(tag: vaultTag)
         }
         guard let vaultIdentifierKey = vaultKeyArray.first else {
-            throw EosioError(EosioErrorCode.keyManagementError, reason: "Unable to create vault key")
+            throw ArisenError(ArisenErrorCode.keyManagementError, reason: "Unable to create vault key")
         }
         return vaultIdentifierKey
     }
@@ -85,7 +85,7 @@ public final class EosioVault {
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
     public func newSecureEnclaveKey(protection: Keychain.AccessibleProtection = .whenUnlockedThisDeviceOnly,
                                     bioFactor: BioFactor = .none,
-                                    metadata: [String: Any]? = nil) throws -> EosioVault.VaultKey {
+                                    metadata: [String: Any]? = nil) throws -> ArisenVault.VaultKey {
 
         return try newVaultKey(secureEnclave: true, protection: protection, bioFactor: bioFactor, metadata: metadata)
     }
@@ -105,7 +105,7 @@ public final class EosioVault {
     public func newVaultKey(secureEnclave: Bool,
                             protection: Keychain.AccessibleProtection = .whenUnlockedThisDeviceOnly,
                             bioFactor: BioFactor = .none,
-                            metadata: [String: Any]? = nil) throws -> EosioVault.VaultKey {
+                            metadata: [String: Any]? = nil) throws -> ArisenVault.VaultKey {
         var tag: String?
         var accessFlag: SecAccessControlCreateFlags?
         switch bioFactor {
@@ -121,22 +121,22 @@ public final class EosioVault {
         }
 
         let secKey = try keychain.createEllipticCurveSecKey(secureEnclave: secureEnclave, tag: tag, label: nil, protection: protection, accessFlag: accessFlag)
-        guard let eosioPublicKey = secKey.publicKey?.externalRepresentation?.compressedPublicKey?.toEosioR1PublicKey else {
-            throw EosioError(.keyManagementError, reason: "Unable to create public key")
+        guard let arisenPublicKey = secKey.publicKey?.externalRepresentation?.compressedPublicKey?.toArisenR1PublicKey else {
+            throw ArisenError(.keyManagementError, reason: "Unable to create public key")
         }
-        var vaultKey = try getVaultKey(eosioPublicKey: eosioPublicKey)
+        var vaultKey = try getVaultKey(arisenPublicKey: arisenPublicKey)
         if let metadata = metadata {
             vaultKey.metadata = metadata
             _ = update(key: vaultKey)
         }
-        postUpdateNotification(eosioPublicKey: eosioPublicKey, action: "new")
+        postUpdateNotification(arisenPublicKey: arisenPublicKey, action: "new")
         return vaultKey
     }
 
     /// Import an external ARISEN private key into the Keychain. Returns a VaultKey or throws an error.
     ///
     /// - Parameters:
-    ///   - eosioPrivateKey: An ARISEN private key.
+    ///   - arisenPrivateKey: An ARISEN private key.
     ///   - protection: Accessibility defaults to .whenUnlockedThisDeviceOnly.
     ///   - bioFactor: The `BioFactor` for this key.
     ///   - metadata: Any metadata to associate with this key.
@@ -144,13 +144,13 @@ public final class EosioVault {
     /// - Throws: If the key is not valid or cannot be imported.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-    public func addExternal(eosioPrivateKey: String,
+    public func addExternal(arisenPrivateKey: String,
                             protection: Keychain.AccessibleProtection = .whenUnlockedThisDeviceOnly,
                             bioFactor: BioFactor = .none,
-                            metadata: [String: Any]? = nil) throws -> EosioVault.VaultKey {
+                            metadata: [String: Any]? = nil) throws -> ArisenVault.VaultKey {
 
-        let eosioKeyComponents = try eosioPrivateKey.eosioComponents()
-        let curve = try EllipticCurveType(eosioKeyComponents.version)
+        let ArisenKeyComponents = try arisenPrivateKey.ArisenComponents()
+        let curve = try EllipticCurveType(ArisenKeyComponents.version)
 
         let tag: String
         var accessFlag: SecAccessControlCreateFlags?
@@ -166,26 +166,26 @@ public final class EosioVault {
             tag = curve.rawValue
         }
 
-        let privateKeyData = try Data(eosioPrivateKey: eosioPrivateKey)
+        let privateKeyData = try Data(arisenPrivateKey: arisenPrivateKey)
         let publicKeyData = try EccRecoverKey.recoverPublicKey(privateKey: privateKeyData, curve: curve)
         let ecKey = try keychain.importExternal(privateKey: publicKeyData + privateKeyData, tag: tag, protection: protection, accessFlag: accessFlag)
-        var vaultKey = try getVaultKey(eosioPublicKey: ecKey.compressedPublicKey.toEosioPublicKey(curve: curve.rawValue))
+        var vaultKey = try getVaultKey(arisenPublicKey: ecKey.compressedPublicKey.toArisenPublicKey(curve: curve.rawValue))
         if let metadata = metadata {
             vaultKey.metadata = metadata
             _ = update(key: vaultKey)
         }
-        postUpdateNotification(eosioPublicKey: vaultKey.eosioPublicKey, action: "new")
+        postUpdateNotification(arisenPublicKey: vaultKey.arisenPublicKey, action: "new")
         return vaultKey
     }
 
     /// Delete a key given the public key. USE WITH CARE!
     ///
-    /// - Parameter eosioPublicKey: The public key for the ARISEN key to delete.
+    /// - Parameter arisenPublicKey: The public key for the ARISEN key to delete.
     /// - Throws: If there is an error deleting the key.
-    public func deleteKey(eosioPublicKey: String) throws {
-        let pubKeyData = try Data(eosioPublicKey: eosioPublicKey)
+    public func deleteKey(arisenPublicKey: String) throws {
+        let pubKeyData = try Data(arisenPublicKey: arisenPublicKey)
         keychain.deleteKey(publicKey: pubKeyData)
-        deleteKeyMetadata(publicKey: eosioPublicKey)
+        deleteKeyMetadata(publicKey: arisenPublicKey)
     }
 
     /// Update the label identifying the key.
@@ -195,7 +195,7 @@ public final class EosioVault {
     ///   - publicKey: The public ARISEN key.
     /// - Throws: If the label cannot be updated.
     public func update(label: String, publicKey: String) throws {
-        let pubKeyData = try Data(eosioPublicKey: publicKey)
+        let pubKeyData = try Data(arisenPublicKey: publicKey)
         keychain.update(label: label, publicKey: pubKeyData)
     }
 
@@ -205,29 +205,29 @@ public final class EosioVault {
     /// - Returns: True if the key was updated, otherwise false.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-    public func update(key: EosioVault.VaultKey) -> Bool {
-        return saveKeyMetadata(eosioPublicKey: key.eosioPublicKey, dictionary: key.metadata)
+    public func update(key: ArisenVault.VaultKey) -> Bool {
+        return saveKeyMetadata(arisenPublicKey: key.arisenPublicKey, dictionary: key.metadata)
     }
 
     /// Get all vault keys and their metadata by combining all Keychain keys (excluding the special __VAULT__ identifier key.)
     ///
     /// - Returns: An array of VaultKeys.
     /// - Throws: If there is an error getting the keys.
-    public func getAllVaultKeys() throws -> [EosioVault.VaultKey] {
+    public func getAllVaultKeys() throws -> [ArisenVault.VaultKey] {
         var vaultKeys = [String: VaultKey]()
 
         // add all ecKeys to the dict
         let ecKeys = try keychain.getAllEllipticCurveKeys()
         for ecKey in ecKeys where ecKey.tag != vaultTag {
             if let vaultKey = VaultKey(ecKey: ecKey, metadata: nil) {
-                vaultKeys[vaultKey.eosioPublicKey] = vaultKey
+                vaultKeys[vaultKey.arisenPublicKey] = vaultKey
             }
         }
 
         // add metadata
         let allMetadata = getAllKeysMetadata() ?? [String: [String: Any]]()
         for (name, metadata) in allMetadata {
-            if var vaultKey = vaultKeys[name] ?? VaultKey(eosioPublicKey: name, ecKey: nil, metadata: metadata) {
+            if var vaultKey = vaultKeys[name] ?? VaultKey(arisenPublicKey: name, ecKey: nil, metadata: metadata) {
                 vaultKey.metadata = metadata
                 vaultKeys[name] = vaultKey
             }
@@ -235,19 +235,19 @@ public final class EosioVault {
         return Array(vaultKeys.values)
     }
 
-    /// Get the vault key for the eosioPublicKey.
+    /// Get the vault key for the arisenPublicKey.
     ///
-    /// - Parameter eosioPublicKey: An ARISEN public key.
+    /// - Parameter arisenPublicKey: An ARISEN public key.
     /// - Returns: A VaultKey.
     /// - Throws: If the key cannot be found.
-    public func getVaultKey(eosioPublicKey: String) throws -> EosioVault.VaultKey {
-        let pubKeyData = try Data(eosioPublicKey: eosioPublicKey)
+    public func getVaultKey(arisenPublicKey: String) throws -> ArisenVault.VaultKey {
+        let pubKeyData = try Data(arisenPublicKey: arisenPublicKey)
         let ecKey = keychain.getEllipticCurveKey(publicKey: pubKeyData)
-        let metadata = getKeyMetadata(eosioPublicKey: eosioPublicKey)
-        if let key = EosioVault.VaultKey(ecKey: ecKey, metadata: metadata) {
+        let metadata = getKeyMetadata(arisenPublicKey: arisenPublicKey)
+        if let key = ArisenVault.VaultKey(ecKey: ecKey, metadata: metadata) {
             return key
         } else {
-            throw EosioError(EosioErrorCode.keyManagementError, reason: "\(eosioPublicKey) not found")
+            throw ArisenError(ArisenErrorCode.keyManagementError, reason: "\(arisenPublicKey) not found")
         }
     }
 
@@ -256,20 +256,20 @@ public final class EosioVault {
     ///
     /// - Parameters:
     ///   - message: The message to sign.
-    ///   - eosioPublicKey: The ARISEN public key corresponding to the key to use for signing.
+    ///   - arisenPublicKey: The ARISEN public key corresponding to the key to use for signing.
     ///   - requireBio: Require biometric identification even if the key does not require it.
     ///   - completion: Closure returning an ARISEN signature or an error.
-    public func sign(message: Data, eosioPublicKey: String, requireBio: Bool, completion: @escaping (String?, EosioError?) -> Void) {
+    public func sign(message: Data, arisenPublicKey: String, requireBio: Bool, completion: @escaping (String?, ArisenError?) -> Void) {
         do {
-            let vaultKey = try getVaultKey(eosioPublicKey: eosioPublicKey)
+            let vaultKey = try getVaultKey(arisenPublicKey: arisenPublicKey)
             sign(message: message, vaultKey: vaultKey, requireBio: requireBio, completion: completion)
         } catch {
-            completion(nil, error.eosioError)
+            completion(nil, error.ArisenError)
         }
     }
 
     // Sign with VaultKey.
-    private func sign(message: Data, vaultKey: VaultKey, requireBio: Bool, completion: @escaping (String?, EosioError?) -> Void) {
+    private func sign(message: Data, vaultKey: VaultKey, requireBio: Bool, completion: @escaping (String?, ArisenError?) -> Void) {
         // if require bio and the bio factor is none, then sign with software bio check
         if requireBio && vaultKey.bioFactor == .none {
             return signWithBioCheck(message: message, vaultKey: vaultKey, completion: completion)
@@ -280,20 +280,20 @@ public final class EosioVault {
                 let sig = try self.sign(message: message, vaultKey: vaultKey)
                 completion(sig, nil)
             } catch {
-                completion(nil, error.eosioError)
+                completion(nil, error.ArisenError)
             }
         }
     }
 
     // Sign with VaultKey after bio check.
-    private func signWithBioCheck(message: Data, vaultKey: VaultKey, completion: @escaping (String?, EosioError?) -> Void) {
+    private func signWithBioCheck(message: Data, vaultKey: VaultKey, completion: @escaping (String?, ArisenError?) -> Void) {
         context = LAContext()
         guard let context = context else {
-            return completion(nil, EosioError(.keySigningError, reason: "no LAContext")) // this should never happen
+            return completion(nil, ArisenError(.keySigningError, reason: "no LAContext")) // this should never happen
         }
         var error: NSError?
         guard context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) else {
-            return completion(nil, error?.eosioError)
+            return completion(nil, error?.ArisenError)
         }
         context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, localizedReason: "Sign Transaction", reply: { (isValid, error) in
             if isValid {
@@ -301,8 +301,8 @@ public final class EosioVault {
                     let sig = try self.sign(message: message, vaultKey: vaultKey)
                     completion(sig, nil)
                 } catch {
-                    let eosioError = EosioError(.keySigningError, reason: error.localizedDescription, originalError: error as NSError?)
-                    completion(nil, eosioError)
+                    let ArisenError = ArisenError(.keySigningError, reason: error.localizedDescription, originalError: error as NSError?)
+                    completion(nil, ArisenError)
                 }
             }
 
@@ -311,8 +311,8 @@ public final class EosioVault {
                 case LAError.appCancel: // Request expiration has occurred and the app has canceled the biometrics authentication.
                     return
                 default:
-                    let eosioError = EosioError(.keySigningError, reason: error.localizedDescription, originalError: error as NSError?)
-                    completion(nil, eosioError)
+                    let ArisenError = ArisenError(.keySigningError, reason: error.localizedDescription, originalError: error as NSError?)
+                    completion(nil, ArisenError)
                 }
             }
         })
@@ -327,82 +327,82 @@ public final class EosioVault {
     /// Throws an error if the public key is not valid or the key is not found.
     private func sign(message: Data, vaultKey: VaultKey) throws -> String {
         guard let privateSecKey = vaultKey.privateSecKey else {
-            throw EosioError(.keySigningError, reason: "Unable to get private key reference for \(vaultKey.eosioPublicKey)")
+            throw ArisenError(.keySigningError, reason: "Unable to get private key reference for \(vaultKey.arisenPublicKey)")
         }
         guard let uncompressedPublicKey = vaultKey.uncompressedPublicKey else {
-            throw EosioError(.keySigningError, reason: "Unable to get uncompressed public key for \(vaultKey.eosioPublicKey)")
+            throw ArisenError(.keySigningError, reason: "Unable to get uncompressed public key for \(vaultKey.arisenPublicKey)")
         }
 
         // If R1, sign using Keychain
         if vaultKey.curve == .r1 {
             let der = try keychain.sign(privateKey: privateSecKey, data: message)
             guard let sig = EcdsaSignature(der: der as Data) else {
-                throw EosioError(.keySigningError, reason: "Unable to create EcdsaSignature for \(der)")
+                throw ArisenError(.keySigningError, reason: "Unable to create EcdsaSignature for \(der)")
             }
             let recid = try EccRecoverKey.recid(signatureDer: sig.der, message: message.sha256, targetPublicKey: uncompressedPublicKey)
             let headerByte: UInt8 = 27 + 4 + UInt8(recid)
-            return Data([headerByte] + sig.r + sig.s).toEosioR1Signature
+            return Data([headerByte] + sig.r + sig.s).toArisenR1Signature
         }
 
-        // If K1, sign using EosioSwiftEcc (uses openSSL)
+        // If K1, sign using ArisenSwiftEcc (uses openSSL)
         if vaultKey.curve == .k1 {
             guard let privateKey = privateSecKey.externalRepresentation?.suffix(32) else {
-                throw EosioError(.keySigningError, reason: "Unable to get private key for \(vaultKey.eosioPublicKey)")
+                throw ArisenError(.keySigningError, reason: "Unable to get private key for \(vaultKey.arisenPublicKey)")
             }
-            let sig = try EosioEccSign.signWithK1(publicKey: uncompressedPublicKey, privateKey: privateKey, data: message)
-            return sig.toEosioK1Signature
+            let sig = try ArisenEccSign.signWithK1(publicKey: uncompressedPublicKey, privateKey: privateKey, data: message)
+            return sig.toArisenK1Signature
         }
 
-        throw EosioError(.keySigningError, reason: "Cannot sign with key \(vaultKey.eosioPublicKey)")
+        throw ArisenError(.keySigningError, reason: "Cannot sign with key \(vaultKey.arisenPublicKey)")
     }
 
-    /// Save metadata for the eosioPublicKey.
+    /// Save metadata for the arisenPublicKey.
     ///
     /// - Parameters:
-    ///   - eosioPublicKey: The ARISEN public key.
+    ///   - arisenPublicKey: The ARISEN public key.
     ///   - dictionary: A metadata dictionary to save.
     /// - Returns: True if the metadata was saved, otherwise false.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-    public func saveKeyMetadata(eosioPublicKey: String, dictionary: [String: Any]) -> Bool {
+    public func saveKeyMetadata(arisenPublicKey: String, dictionary: [String: Any]) -> Bool {
         guard let json = dictionary.jsonString else { return false }
-        return saveKeyMetadata(eosioPublicKey: eosioPublicKey, json: json)
+        return saveKeyMetadata(arisenPublicKey: arisenPublicKey, json: json)
     }
 
-    /// Save metadata for the eosioPublicKey
+    /// Save metadata for the arisenPublicKey
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-    private func saveKeyMetadata(eosioPublicKey: String, json: String) -> Bool {
-        let name = eosioPublicKey
+    private func saveKeyMetadata(arisenPublicKey: String, json: String) -> Bool {
+        let name = arisenPublicKey
         var result = false
-        if getKeyMetadata(eosioPublicKey: eosioPublicKey) != nil {
-            result = keychain.updateValue(name: name, value: json, service: eosioKeyMetadataService)
+        if getKeyMetadata(arisenPublicKey: arisenPublicKey) != nil {
+            result = keychain.updateValue(name: name, value: json, service: ArisenKeyMetadataService)
         } else {
-            result = keychain.saveValue(name: name, value: json, service: eosioKeyMetadataService)
+            result = keychain.saveValue(name: name, value: json, service: ArisenKeyMetadataService)
         }
         if result == true {
-            postUpdateNotification(eosioPublicKey: eosioPublicKey, action: "metadata update")
+            postUpdateNotification(arisenPublicKey: arisenPublicKey, action: "metadata update")
         }
         return result
     }
 
-    /// Delete metadata for the eosioPublicKey.
+    /// Delete metadata for the arisenPublicKey.
     ///
     /// - Parameter publicKey: The public key.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
     public func deleteKeyMetadata(publicKey: String) {
-        keychain.delete(name: publicKey, service: eosioKeyMetadataService)
+        keychain.delete(name: publicKey, service: ArisenKeyMetadataService)
     }
 
-    /// Get metadata for the eosioPublicKey.
+    /// Get metadata for the arisenPublicKey.
     ///
-    /// - Parameter eosioPublicKey: An ARISEN public key.
+    /// - Parameter arisenPublicKey: An ARISEN public key.
     /// - Returns: The metadata dictionary for the key, if existing.
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-    public func getKeyMetadata(eosioPublicKey: String) -> [String: Any]? {
-        guard let json = keychain.getValue(name: eosioPublicKey, service: eosioKeyMetadataService) else { return nil }
+    public func getKeyMetadata(arisenPublicKey: String) -> [String: Any]? {
+        guard let json = keychain.getValue(name: arisenPublicKey, service: ArisenKeyMetadataService) else { return nil }
         return json.toJsonDictionary
     }
 
@@ -412,7 +412,7 @@ public final class EosioVault {
     /// - Important: Metadata must follow the rules for JSONSerialization.
     /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
     public func getAllKeysMetadata() -> [String: [String: Any]]? {
-        guard let values = keychain.getValues(service: eosioKeyMetadataService) else { return nil }
+        guard let values = keychain.getValues(service: ArisenKeyMetadataService) else { return nil }
         var keyMetadataArray = [String: [String: Any]]()
         for (name, value) in values {
             if let dictionary = value.toJsonDictionary {

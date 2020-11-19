@@ -1,15 +1,15 @@
 //
-//  EosioSwiftVaultTests.swift
-//  EosioSwiftVaultTests
+//  ArisenSwiftVaultTests.swift
+//  ArisenSwiftVaultTests
 //
 //  Created by Todd Bowden on 3/22/19.
 //  Copyright (c) 2017-2019 block.one and its contributors. All rights reserved.
 //
 
 import XCTest
-@testable import EosioSwiftVault
+@testable import ArisenSwiftVault
 
-class EosioSwiftVaultTests: XCTestCase {
+class ArisenSwiftVaultTests: XCTestCase {
 
     override func setUp() {
         // Put setup code here. This method is called before the invocation of each test method in the class.

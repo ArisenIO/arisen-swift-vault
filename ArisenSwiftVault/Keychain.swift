@@ -1,6 +1,6 @@
 //
 //  Keychain.swift
-//  EosioSwiftVault
+//  ArisenSwiftVault
 //
 //  Created by Todd Bowden on 7/11/18.
 //  Copyright (c) 2017-2019 block.one and its contributors. All rights reserved.
@@ -8,7 +8,7 @@
 
 import Foundation
 import Security
-import EosioSwift
+import ArisenSwift
 
 /// General class for interacting with the Keychain and Secure Enclave.
 public class Keychain {
@@ -266,10 +266,10 @@ public class Keychain {
             return [ECKey]()
         }
         guard status == errSecSuccess else {
-            throw EosioError(.keyManagementError, reason: "Get keys query error \(status)")
+            throw ArisenError(.keyManagementError, reason: "Get keys query error \(status)")
         }
         guard let array = items as? [[String: Any]] else {
-            throw EosioError(.keyManagementError, reason: "Get keys items not an array of dictionaries")
+            throw ArisenError(.keyManagementError, reason: "Get keys items not an array of dictionaries")
         }
         var keys = [ECKey]()
         for item in array {
@@ -366,16 +366,16 @@ public class Keychain {
 
         //check data length
         guard privateKey.count == 97 else {
-            throw EosioError(.keyManagementError, reason: "Private Key data should be 97 bytes, found \(privateKey.count) bytes")
+            throw ArisenError(.keyManagementError, reason: "Private Key data should be 97 bytes, found \(privateKey.count) bytes")
         }
 
         let publicKey = privateKey.prefix(65)
         if getEllipticCurveKey(publicKey: publicKey) != nil {
-            throw EosioError(.keyManagementError, reason: "Key already exists")
+            throw ArisenError(.keyManagementError, reason: "Key already exists")
         }
 
         guard let access = makeSecSecAccessControl(secureEnclave: false, protection: protection, accessFlag: accessFlag) else {
-            throw EosioError(.keyManagementError, reason: "Error creating Access Control")
+            throw ArisenError(.keyManagementError, reason: "Error creating Access Control")
         }
 
         var attributes: [String: Any] = [
@@ -399,7 +399,7 @@ public class Keychain {
         var error: Unmanaged<CFError>?
         guard let secKey = SecKeyCreateWithData(privateKey as CFData, attributes as CFDictionary, &error) else {
             print(error.debugDescription)
-            throw EosioError(.keyManagementError, reason: error.debugDescription)
+            throw ArisenError(.keyManagementError, reason: error.debugDescription)
         }
 
         attributes = [
@@ -416,11 +416,11 @@ public class Keychain {
 
         let status = SecItemAdd(attributes as CFDictionary, nil)
         guard status == errSecSuccess else {
-            throw EosioError(.keyManagementError, reason: "Unable to add key \(publicKey) to Keychain")
+            throw ArisenError(.keyManagementError, reason: "Unable to add key \(publicKey) to Keychain")
         }
 
         guard let key = getEllipticCurveKey(publicKey: publicKey) else {
-            throw EosioError(.keyManagementError, reason: "Unable to find key \(publicKey) in Keychain")
+            throw ArisenError(.keyManagementError, reason: "Unable to find key \(publicKey) in Keychain")
         }
         return key
     }
@@ -478,7 +478,7 @@ public class Keychain {
                                           protection: AccessibleProtection = .whenUnlockedThisDeviceOnly,
                                           accessFlag: SecAccessControlCreateFlags? = nil) throws -> SecKey {
         guard let access = makeSecSecAccessControl(secureEnclave: secureEnclave, protection: protection, accessFlag: accessFlag) else {
-            throw EosioError(.keyManagementError, reason: "Error creating Access Control")
+            throw ArisenError(.keyManagementError, reason: "Error creating Access Control")
         }
 
         var attributes: [String: Any] = [
@@ -506,7 +506,7 @@ public class Keychain {
 
         var error: Unmanaged<CFError>?
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
-            throw EosioError(.keyManagementError, reason: error.debugDescription)
+            throw ArisenError(.keyManagementError, reason: error.debugDescription)
         }
         return privateKey
     }
@@ -520,7 +520,7 @@ public class Keychain {
     /// - Throws: If private key is not available.
     public func sign(publicKey: Data, data: Data) throws -> Data {
         guard let privateKey = getPrivateSecKey(publicKey: publicKey) else {
-            throw EosioError(.keyManagementError, reason: "Private key is not available for public key \(publicKey.hex)")
+            throw ArisenError(.keyManagementError, reason: "Private key is not available for public key \(publicKey.hex)")
         }
         return try sign(privateKey: privateKey, data: data)
     }
@@ -535,11 +535,11 @@ public class Keychain {
     public func sign(privateKey: SecKey, data: Data) throws -> Data {
         let algorithm: SecKeyAlgorithm = .ecdsaSignatureMessageX962SHA256
         guard SecKeyIsAlgorithmSupported(privateKey, .sign, algorithm) else {
-            throw EosioError(.keySigningError, reason: "Algorithm \(algorithm) is not supported")
+            throw ArisenError(.keySigningError, reason: "Algorithm \(algorithm) is not supported")
         }
         var error: Unmanaged<CFError>?
         guard let der = SecKeyCreateSignature(privateKey, algorithm, data as CFData, &error) else {
-            throw EosioError(.keyManagementError, reason: error.debugDescription)
+            throw ArisenError(.keyManagementError, reason: error.debugDescription)
         }
         return der as Data
     }
@@ -554,13 +554,13 @@ public class Keychain {
     public func decrypt(publicKey: Data, message: Data) throws -> Data {
         // lookup ecKey in the Keychain
         guard let ecKey = getEllipticCurveKey(publicKey: publicKey) else {
-            throw EosioError(.keyManagementError, reason: "key not found")
+            throw ArisenError(.keyManagementError, reason: "key not found")
         }
         // decrypt
         var error: Unmanaged<CFError>?
         let algorithm = SecKeyAlgorithm.eciesEncryptionCofactorVariableIVX963SHA256AESGCM
         guard let decryptedData = SecKeyCreateDecryptedData(ecKey.privateSecKey, algorithm, message as CFData, &error) else {
-            throw EosioError(.keyManagementError, reason: error.debugDescription)
+            throw ArisenError(.keyManagementError, reason: error.debugDescription)
         }
         return decryptedData as Data
     }

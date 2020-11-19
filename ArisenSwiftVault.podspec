@@ -1,5 +1,5 @@
 #
-# Be sure to run `pod lib lint EosioSwiftVault.podspec' to ensure this is a
+# Be sure to run `pod lib lint ArisenSwiftVault.podspec' to ensure this is a
 # valid spec before submitting.
 #
 # Any lines starting with a # are optional, but their use is encouraged
@@ -7,7 +7,7 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = 'EosioSwiftVault'
+  s.name             = 'ArisenSwiftVault'
   s.version          = '0.2.1'
   s.summary          = 'Keychain and Secure Enclave functions for ARISEN.'
   s.homepage         = 'https://github.com/ARISEN/arisen-swift-vault'
@@ -21,7 +21,7 @@ Pod::Spec.new do |s|
   s.swift_version         = '5.0'
   s.ios.deployment_target = '11.3'
 
-  s.source_files = 'EosioSwiftVault/**/*.swift'
+  s.source_files = 'ArisenSwiftVault/**/*.swift'
 
   s.pod_target_xcconfig = {
     'CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES' => 'YES',
@@ -29,6 +29,6 @@ Pod::Spec.new do |s|
     'SWIFT_COMPILATION_MODE' => 'wholemodule',
     'ENABLE_BITCODE' => 'YES' }
 
-  s.ios.dependency 'EosioSwift', '~> 0.2.1'
-  s.ios.dependency 'EosioSwiftEcc', '~> 0.2.1'
+  s.ios.dependency 'ArisenSwift', '~> 0.2.1'
+  s.ios.dependency 'ArisenSwiftEcc', '~> 0.2.1'
 end

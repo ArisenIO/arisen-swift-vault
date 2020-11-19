@@ -1,28 +1,28 @@
 //
-//  EosioVaultKey.swift
-//  EosioVault
+//  ArisenVaultKey.swift
+//  ArisenVault
 //
 //  Created by Todd Bowden on 8/26/18.
 //  Copyright (c) 2017-2019 block.one and its contributors. All rights reserved.
 //
 
 import Foundation
-import EosioSwiftEcc
+import ArisenSwiftEcc
 
-public extension EosioVault {
+public extension ArisenVault {
 
     /// VaultKey collects properties into a single object for an ARISEN elliptic curve key.
     struct VaultKey {
         /// The ARISEN public key.
-        private (set) public var eosioPublicKey: String
+        private (set) public var arisenPublicKey: String
         /// The ARISEN private key. (nil for Secure Enclave keys).
-        public var eosioPrivateKey: String? {
+        public var arisenPrivateKey: String? {
             guard let privateKey = privateKey else { return nil }
             guard privateKey.count >= 32 else { return nil }
             let pk32 = privateKey.suffix(32)
             switch curve {
-            case .k1: return pk32.toEosioK1PrivateKey
-            case .r1: return pk32.toEosioR1PrivateKey
+            case .k1: return pk32.toArisenK1PrivateKey
+            case .r1: return pk32.toArisenR1PrivateKey
             }
         }
         /// The label for this key in the Keychain.
@@ -36,7 +36,7 @@ public extension EosioVault {
         /// Is the private key stored in the Secure Enclave?
         private (set) public var isSecureEnclave: Bool
         /// The biometric factor enforced on this key by the Keychain.
-        private (set) public var bioFactor: EosioVault.BioFactor
+        private (set) public var bioFactor: ArisenVault.BioFactor
         /// The private SecKey.
         private (set) public var privateSecKey: SecKey?
         /// The private key in ANSI X9.63 format. (nil for Secure Enclave keys).
@@ -59,18 +59,18 @@ public extension EosioVault {
         /// Init a VaultKey.
         ///
         /// - Parameters:
-        ///   - eosioPublicKey: An ARISEN public key.
+        ///   - arisenPublicKey: An ARISEN public key.
         ///   - ecKey: An ECKey.
         ///   - metadata: Metadata dictionary.
         /// - Important: Metadata must follow the rules for JSONSerialization.
         /// - SeeAlso: https://developer.apple.com/documentation/foundation/jsonserialization
-        init?(eosioPublicKey: String? = nil, ecKey: Keychain.ECKey?, metadata: [String: Any]?) {
+        init?(arisenPublicKey: String? = nil, ecKey: Keychain.ECKey?, metadata: [String: Any]?) {
 
             // Case of publicKey + metadata with no ecKey = retired key
             guard let ecKey = ecKey else {
-                guard let eosioPublicKey = eosioPublicKey else { return nil }
-                self.eosioPublicKey = eosioPublicKey
-                let version = (try? self.eosioPublicKey.eosioComponents().version) ?? ""
+                guard let arisenPublicKey = arisenPublicKey else { return nil }
+                self.arisenPublicKey = arisenPublicKey
+                let version = (try? self.arisenPublicKey.ArisenComponents().version) ?? ""
                 self.curve = (try? EllipticCurveType(version)) ?? .r1
                 self.bioFactor = .none
                 self.accessGroup = ""
@@ -90,12 +90,12 @@ public extension EosioVault {
                 curve = .r1
             }
 
-            guard let pubKey = try? ecKey.compressedPublicKey.toEosioPublicKey(curve: curve.rawValue) else { return nil }
-            self.eosioPublicKey = pubKey
+            guard let pubKey = try? ecKey.compressedPublicKey.toArisenPublicKey(curve: curve.rawValue) else { return nil }
+            self.arisenPublicKey = pubKey
 
-            // if eosioPublicKey defined, verify it matches the ecKey public key
-            if let eosioPublicKey = eosioPublicKey {
-                guard eosioPublicKey == self.eosioPublicKey else { return nil }
+            // if arisenPublicKey defined, verify it matches the ecKey public key
+            if let arisenPublicKey = arisenPublicKey {
+                guard arisenPublicKey == self.arisenPublicKey else { return nil }
             }
 
             label = ecKey.label
@@ -103,9 +103,9 @@ public extension EosioVault {
             accessGroup = ecKey.accessGroup
 
             if let tag = self.tag {
-                if tag.contains(words: EosioVault.BioFactor.fixed.rawValue) {
+                if tag.contains(words: ArisenVault.BioFactor.fixed.rawValue) {
                     bioFactor = .fixed
-                } else if tag.contains(words: EosioVault.BioFactor.flex.rawValue) {
+                } else if tag.contains(words: ArisenVault.BioFactor.flex.rawValue) {
                     bioFactor = .flex
                 } else {
                     bioFactor = .none

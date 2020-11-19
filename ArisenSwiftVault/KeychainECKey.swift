@@ -1,6 +1,6 @@
 //
 //  Keychain.swift
-//  EosioSwiftVault
+//  ArisenSwiftVault
 
 //  Created by Todd Bowden on 8/13/18.
 //  Copyright (c) 2017-2019 block.one and its contributors. All rights reserved.
